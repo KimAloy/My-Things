@@ -12,6 +12,7 @@ Future main() async {
   runApp(MyApp());
 }
 
+// this is to test commiting to github from android studio
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
