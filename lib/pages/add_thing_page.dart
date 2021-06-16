@@ -32,8 +32,19 @@ class _AddThingState extends State<AddThing> {
   File? receiptPhotoFile;
   File? itemPhotoFile;
   bool loading = false;
-  String? itemPhotoError = '';
-  String? receiptPhotoError = '';
+  bool itemPhotoError = false;
+  bool receiptPhotoError = false;
+  bool generalError = false;
+
+  var currentFocus;
+
+  void unFocus() {
+    currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
 
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirebaseFirestore.instance;
@@ -100,13 +111,13 @@ class _AddThingState extends State<AddThing> {
                   },
                   title: 'Upload receipt photo*',
                 ),
-                receiptPhotoError == ''
+                receiptPhotoError == false
                     ? const SizedBox.shrink()
                     : Column(
                         children: [
                           const SizedBox(height: 2.0),
                           Text(
-                            receiptPhotoError!,
+                            'Select a receipt photo',
                             style: TextStyle(color: Colors.red, fontSize: 14),
                           ),
                         ],
@@ -121,18 +132,29 @@ class _AddThingState extends State<AddThing> {
                   title: 'Upload item photo*',
                 ),
                 const SizedBox(height: 4.0),
-                itemPhotoError == ''
+                itemPhotoError == false
                     ? const SizedBox.shrink()
                     : Column(
                         children: [
                           const SizedBox(height: 2.0),
                           Text(
-                            itemPhotoError!,
+                            'Select an item photo',
                             style: TextStyle(color: Colors.red, fontSize: 14),
                           ),
                         ],
                       ),
                 SizedBox(height: 15),
+                generalError == false
+                    ? const SizedBox.shrink()
+                    : Column(
+                        children: [
+                          const SizedBox(height: 2.0),
+                          Text(
+                            'Please fill in the fields marked *',
+                            style: TextStyle(color: Colors.red, fontSize: 14),
+                          ),
+                        ],
+                      ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ElevatedButton(
@@ -165,20 +187,22 @@ class _AddThingState extends State<AddThing> {
   }
 
   void addThing() async {
+    unFocus();
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final User? currentUser = _auth.currentUser;
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
+      setState(() => generalError = true);
       return;
     } else if (receiptPhotoFile == null) {
       setState(() {
-        receiptPhotoError = 'Select a receipt photo';
+        receiptPhotoError = true;
         loading = false;
       });
       return;
     } else if (itemPhotoFile == null) {
       setState(() {
-        itemPhotoError = 'Select an item photo';
+        itemPhotoError = true;
         loading = false;
       });
       return;

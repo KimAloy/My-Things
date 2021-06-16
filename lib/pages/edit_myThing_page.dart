@@ -41,11 +41,22 @@ class _EditPageState extends State<EditPage> {
   File? receiptPhotoFile;
   File? itemPhotoFile;
   bool loading = false;
+  bool generalError = false;
 
   final _formKey = GlobalKey<FormState>();
   final _firestore = FirebaseFirestore.instance;
   final User? loggedInUser = FirebaseAuth.instance.currentUser;
   final currentDate = DateTime.now();
+
+  var currentFocus;
+
+  void unFocus() {
+    currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
 
   @override
   void initState() {
@@ -146,18 +157,32 @@ class _EditPageState extends State<EditPage> {
                       ),
                 const SizedBox(height: 4.0),
                 SizedBox(height: 15),
+                generalError == false
+                    ? const SizedBox.shrink()
+                    : Column(
+                        children: [
+                          const SizedBox(height: 2.0),
+                          Text(
+                            'Please fill in the fields marked *',
+                            style: TextStyle(color: Colors.red, fontSize: 14),
+                          ),
+                        ],
+                      ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: ElevatedButton(
                     // onPressed: addThing,
                     onPressed: () async {
-                      final FirebaseAuth _auth = FirebaseAuth.instance;
-                      final User? currentUser = _auth.currentUser;
+                      unFocus();
                       final isValid = _formKey.currentState!.validate();
                       if (!isValid) {
+                        generalError = true;
                         return;
                       } else {
                         setState(() => loading = true);
+                        final FirebaseAuth _auth = FirebaseAuth.instance;
+                        final User? currentUser = _auth.currentUser;
+
                         UploadTask? task;
 
                         /// update receiptImage in Firestore & Firebase Storage

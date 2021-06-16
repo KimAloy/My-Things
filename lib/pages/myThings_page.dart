@@ -98,14 +98,6 @@ class MyThingsPage extends StatelessWidget {
                                         Scaffold.of(context).openDrawer()),
                               ),
                               Spacer(),
-                              TextButton(
-                                  onPressed: () async {
-                                    // TODO: use Firebase Extension plugin to trigger deleting all user related data
-                                    await _auth.deleteAccount();
-                                    Utils.showSnackBar(
-                                        context, 'Account deleted');
-                                  },
-                                  child: Text('delete')),
                               ProfilePicture(),
                             ],
                           ),

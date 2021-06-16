@@ -20,7 +20,8 @@ class BrandName extends StatelessWidget {
           children: [
             Text('Brand name*', style: kCardTitleTextStyle),
             const SizedBox(height: 8),
-            MyTextFormField(
+            MyTextFormFieldCapitalization(
+                capitalization: TextCapitalization.sentences,
                 maxLines: 1,
                 labelText: 'Enter brand name*',
                 controller: controller,

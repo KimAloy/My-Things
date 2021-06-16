@@ -81,15 +81,12 @@ class _ResetPasswordState extends State<ResetPassword> {
                             borderRadius: BorderRadius.circular(5)),
                         primary: kAppGreen,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Text(
-                          'Send verification email',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      child: Text(
+                        'Send verification email',
+                        style: TextStyle(
+                          // fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       onPressed: () async {

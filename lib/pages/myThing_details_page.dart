@@ -156,7 +156,7 @@ class _MyThingDetailPageState extends State<MyThingDetailPage> {
                 // tag: widget.ds['itemImage'],
                 child: Image.network(
                   widget.ds['itemImage'],
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

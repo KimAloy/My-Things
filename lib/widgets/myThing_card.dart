@@ -51,12 +51,10 @@ class MyThingCard extends StatelessWidget {
                       return Container(
                         height: 50,
                         width: 90,
-                        // color: Colors.grey.shade200,
-
                         child: Center(
                           child: Icon(
-                            Icons.image_search_outlined,
-                            // color: Colors.white70,
+                            Icons.image,
+                            size: 30,
                             color: Colors.grey.shade200,
                           ),
                         ),
@@ -68,14 +66,11 @@ class MyThingCard extends StatelessWidget {
                         // color: Colors.red,
                         height: 50,
                         width: 90,
-                        // child: Image.asset(myThing.itemImage!),
                         child: Hero(
                           tag: ds.id,
-                          // tag: ds['itemImage'],
                           child: Image.network(
                             data['itemImage'],
-                            // ds['itemImage'],
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       );
@@ -86,20 +81,6 @@ class MyThingCard extends StatelessWidget {
                         child: Center(child: CircularProgressIndicator()));
                   },
                 ),
-                // Container(
-                //   // color: Colors.red,
-                //   height: 50,
-                //   width: 90,
-                //   // child: Image.asset(myThing.itemImage!),
-                //   child: Hero(
-                //     tag: ds.id,
-                //     // tag: ds['itemImage'],
-                //     child: Image.network(
-                //       ds['itemImage'],
-                //       fit: BoxFit.cover,
-                //     ),
-                //   ),
-                // ),
                 SizedBox(height: 8),
                 Text(
                   ds['brandName'],
