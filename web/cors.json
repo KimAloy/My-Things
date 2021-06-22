@@ -1,0 +1,8 @@
+
+[
+  {
+    "origin": ["https://my-things-8389b.web.app/"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]

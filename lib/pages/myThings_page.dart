@@ -11,18 +11,29 @@ import 'package:mythings/widgets/myThing_card.dart';
 import 'package:mythings/widgets/my_dialog.dart';
 import 'package:mythings/widgets/profile_picture.dart';
 
-class MyThingsPage extends StatelessWidget {
+class MyThingsPage extends StatefulWidget {
+  @override
+  _MyThingsPageState createState() => _MyThingsPageState();
+}
+
+class _MyThingsPageState extends State<MyThingsPage> {
   @override
   Widget build(BuildContext context) {
     final _auth = Auth();
 
-    double cardWidth = MediaQuery.of(context).size.width / 3.3;
-    double cardHeight = MediaQuery.of(context).size.height / 4.7;
+    // double cardHeight = MediaQuery.of(context).size.height / 4.7;
     final User? loggedInUser = FirebaseAuth.instance.currentUser;
     final Stream<QuerySnapshot> _myThingsStream = FirebaseFirestore.instance
         .collection('things')
         .where('userEmail', isEqualTo: loggedInUser!.email)
         .snapshots();
+
+    Future<Stream> getData() async {
+      return FirebaseFirestore.instance
+          .collection('things')
+          .where('userEmail', isEqualTo: loggedInUser.email)
+          .snapshots();
+    }
 
     return StreamBuilder<QuerySnapshot>(
         stream: _myThingsStream,
@@ -35,144 +46,152 @@ class MyThingsPage extends StatelessWidget {
           // if(snapshot.connectionState == ConnectionState.waiting){
           if (!snapshot.hasData) {
             // return buildText('Loading...');
-            return Container(
+            return Scaffold(
+              body: Container(
                 color: Colors.white,
-                child: Center(child: CircularProgressIndicator()));
+                child: Center(child: CircularProgressIndicator()),
+              ),
+            );
+            // return HasNoData();
           } else {
             int myThingsLength = snapshot.data!.docs.length;
-            return Scaffold(
-              backgroundColor: kGrey100,
+            return RefreshIndicator(
+              onRefresh: getData,
+              color: kAppGreen,
+              child: Scaffold(
+                backgroundColor: kGrey100,
 
-              drawer: Drawer(
-                child: ListView(
-                  children: [
-                    SizedBox(
-                      height: 65,
-                      child: DrawerHeader(child: GetUserName()), //user name
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.logout),
-                      title: Text('Log out'),
-                      onTap: Auth().signOutUser,
-                    ),
-                    ListTile(
-                      leading: Icon(Icons.delete),
-                      title: Text('Delete account'),
-                      onTap: () async {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return MyDialog(
-                                title:
-                                    'Do you want to permanently delete your account?',
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  await _auth.deleteAccount();
-                                  Utils.showSnackBar(
-                                      context, 'Account deleted successfully');
-                                },
-                              );
-                            });
-                      },
-                    ),
-                  ],
+                drawer: Drawer(
+                  child: ListView(
+                    children: [
+                      SizedBox(
+                        height: 65,
+                        child: DrawerHeader(child: GetUserName()), //user name
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.logout),
+                        title: Text('Log out'),
+                        onTap: Auth().signOutUser,
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.delete),
+                        title: Text('Delete account'),
+                        onTap: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return MyDialog(
+                                  title:
+                                      'Do you want to permanently delete your account?',
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await _auth.deleteAccount();
+                                    Utils.showSnackBar(context,
+                                        'Account deleted successfully');
+                                  },
+                                );
+                              });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(95),
-                child: AppBar(
-                  automaticallyImplyLeading: false,
-                  backgroundColor: kGrey100,
-                  elevation: 0.0,
-                  flexibleSpace: SafeArea(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: Row(
-                            children: [
-                              Builder(
-                                builder: (context) => IconButton(
-                                    icon: Icon(Icons.menu),
-                                    onPressed: () =>
-                                        Scaffold.of(context).openDrawer()),
-                              ),
-                              Spacer(),
-                              ProfilePicture(),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Center(
-                          child: Text(
-                            // 'My $myThingsLength Things',
-                            myThingsLength == 1
-                                ? 'My 1 Thing'
-                                : 'My $myThingsLength Things',
-                            style: TextStyle(
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(95),
+                  child: AppBar(
+                    automaticallyImplyLeading: false,
+                    backgroundColor: kGrey100,
+                    elevation: 0.0,
+                    flexibleSpace: SafeArea(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Row(
+                              children: [
+                                Builder(
+                                  builder: (context) => IconButton(
+                                      icon: Icon(Icons.menu),
+                                      onPressed: () =>
+                                          Scaffold.of(context).openDrawer()),
+                                ),
+                                Spacer(),
+                                ProfilePicture(),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 5),
+                          Center(
+                            child: Text(
+                              // 'My $myThingsLength Things',
+                              myThingsLength == 1
+                                  ? 'My 1 Thing'
+                                  : 'My $myThingsLength Things',
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: myThingsLength,
-                        itemBuilder: (context, index) {
-                          final DocumentSnapshot ds =
-                              snapshot.data!.docs[index];
-                          return GestureDetector(
-                            onTap: () {
-                              // TODO: replace beamer package for navigation
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      MyThingDetailPage(ds: ds)));
-                            },
-                            child: MyThingCard(
-                              ds: ds,
-                              cardWidth: cardWidth,
-                            ),
-                          );
-                        },
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          // childAspectRatio: 0.8,
-                          childAspectRatio: cardWidth / cardHeight,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 6,
+                body: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: myThingsLength,
+                          itemBuilder: (context, index) {
+                            final DocumentSnapshot ds =
+                                snapshot.data!.docs[index];
+                            return GestureDetector(
+                              onTap: () {
+                                // TODO: replace beamer package for navigation
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        MyThingDetailPage(ds: ds)));
+                              },
+                              child: MyThingCard(
+                                ds: ds,
+                              ),
+                            );
+                          },
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.85,
+                            // childAspectRatio: cardWidth / cardHeight,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 80),
-                  ],
+                      const SizedBox(height: 80),
+                    ],
+                  ),
                 ),
+                floatingActionButton: FloatingActionButton(
+                  backgroundColor: Colors.blue,
+                  onPressed: () {
+                    // TODO: Implement better page transition to show off
+                    Navigator.push(context, MaterialPageRoute(builder: (_) {
+                      return AddThing();
+                    }));
+                  },
+                  tooltip: 'Increment',
+                  child: Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                ), // This trailing comma makes auto-formatting nicer for build methods.
               ),
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.blue,
-                onPressed: () {
-                  // TODO: Implement better page transition to show off
-                  Navigator.push(context, MaterialPageRoute(builder: (_) {
-                    return AddThing();
-                  }));
-                },
-                tooltip: 'Increment',
-                child: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-              ), // This trailing comma makes auto-formatting nicer for build methods.
             );
           }
         });
