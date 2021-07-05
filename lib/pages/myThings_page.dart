@@ -120,9 +120,9 @@ class MyThingsPage extends ConsumerWidget {
                     backgroundColor: Colors.blue,
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) {
-                        return kIsWeb
-                            ? AddThingWebPage1()
-                            : AddThingMobilePage();
+                        // return kIsWeb ?
+                        return AddThingWebPage1();
+                        // : AddThingMobilePage();
                       }));
                     },
                     tooltip: 'Add Thing',
