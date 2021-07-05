@@ -79,29 +79,34 @@ class DraftsPage extends ConsumerWidget {
                     ),
                   ),
                   body: SingleChildScrollView(
-                    child: Center(
-                      child: Wrap(
-                        children: val.docs
-                            // this is a filter
-                            .map((DocumentSnapshot ds) {
-                          Item item = Item.fromJson(ds: ds);
-                          return GestureDetector(
-                            onLongPress: () => Utils.deleteThing(ds: ds),
-                            child: MyThingCard(
-                              // ds: ds,
-                              item: item,
-                              onTap: () {
-                                // TODO: replace beamer package for navigation
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          EditPage(item: item)),
-                                );
-                              },
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Wrap(
+                            children: val.docs
+                                // this is a filter
+                                .map((DocumentSnapshot ds) {
+                              Item item = Item.fromJson(ds: ds);
+                              return GestureDetector(
+                                onLongPress: () => Utils.deleteThing(ds: ds),
+                                child: MyThingCard(
+                                  // ds: ds,
+                                  item: item,
+                                  onTap: () {
+                                    // TODO: replace beamer package for navigation
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditPage(item: item)),
+                                    );
+                                  },
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 80),
+                      ],
                     ),
                   ),
                 ),

@@ -82,38 +82,44 @@ class MyThingsPage extends ConsumerWidget {
                     ),
                   ),
                   body: SingleChildScrollView(
-                    child: Center(
-                      child: Wrap(
-                        children: val.docs
-                            // this is a filter
-                            .where((element) => element['receiptImage'] != null)
-                            .map((DocumentSnapshot ds) {
-                          Item item = Item.fromJson(ds: ds);
-                          return MyThingCard(
-                            // ds: ds,
-                            item: item,
-                            onTap: () {
-                              // TODO: replace beamer package for navigation
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) =>
-                                      MyThingDetailPage(ds: ds, item: item)));
-                              // context
-                              //     .read(detailsPageController.notifier)
-                              //     .myItem(
-                              //       id: item.id,
-                              //       brandName: item.brandName,
-                              //       expiryDate: item.expiryDate,
-                              //       itemImage: item.itemImage,
-                              //       itemShortDescription:
-                              //           item.itemShortDescription,
-                              //       purchaseDate: item.purchaseDate,
-                              //       receiptImage: item.receiptImage,
-                              //       userEmail: item.userEmail,
-                              //     );
-                            },
-                          );
-                        }).toList(),
-                      ),
+                    child: Column(
+                      children: [
+                        Center(
+                          child: Wrap(
+                            children: val.docs
+                                // this is a filter
+                                .where((element) =>
+                                    element['receiptImage'] != null)
+                                .map((DocumentSnapshot ds) {
+                              Item item = Item.fromJson(ds: ds);
+                              return MyThingCard(
+                                // ds: ds,
+                                item: item,
+                                onTap: () {
+                                  // TODO: replace beamer package for navigation
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => MyThingDetailPage(
+                                          ds: ds, item: item)));
+                                  // context
+                                  //     .read(detailsPageController.notifier)
+                                  //     .myItem(
+                                  //       id: item.id,
+                                  //       brandName: item.brandName,
+                                  //       expiryDate: item.expiryDate,
+                                  //       itemImage: item.itemImage,
+                                  //       itemShortDescription:
+                                  //           item.itemShortDescription,
+                                  //       purchaseDate: item.purchaseDate,
+                                  //       receiptImage: item.receiptImage,
+                                  //       userEmail: item.userEmail,
+                                  //     );
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        const SizedBox(height: 80),
+                      ],
                     ),
                   ),
                   floatingActionButton: FloatingActionButton(
