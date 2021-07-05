@@ -1,10 +1,11 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
+// ignore: avoid_web_libraries_in_flutter
+import 'dart:html';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mythings/firebase_api/firebase_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mythings/repositories/myFilePickerAPIs.dart';
 import 'package:mythings/my_constants/my_constants.dart';
 
 class ProfilePicture extends StatelessWidget {
@@ -35,10 +36,14 @@ class ProfilePicture extends StatelessWidget {
                       Icons.account_circle_outlined,
                       size: 35,
                     ),
-                    onPressed: changeProfilePicture,
+                    onPressed: kIsWeb
+                        ? changeProfilePictureWeb
+                        : MyFilePickerAPIs.changeProfilePictureMobile,
                   )
                 : GestureDetector(
-                    onTap: changeProfilePicture,
+                    onTap: kIsWeb
+                        ? changeProfilePictureWeb
+                        : MyFilePickerAPIs.changeProfilePictureMobile,
                     child: CircleAvatar(
                       backgroundImage: NetworkImage(profilePicture),
                       backgroundColor: kGrey100,
@@ -49,34 +54,29 @@ class ProfilePicture extends StatelessWidget {
         });
   }
 
-  Future changeProfilePicture() async {
+  changeProfilePictureWeb() {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     final User? currentUser = FirebaseAuth.instance.currentUser;
-    UploadTask? task;
 
-    // pick image from device
-    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-    if (result == null) return;
-    final path = result.files.single.path;
-    final file = File(path!);
-
-    // upload new image to storage
-    // ignore: unnecessary_null_comparison
-    if (file == null) return;
-    final destination = '${currentUser!.email}/profilePicture';
-    task = FirebaseApi.uploadFile(destination, file);
-    // print('profilePicture successfully uploaded');
-
-    // Get image url from firebase storage
-    if (task == null) return;
-    final snapshot = await task.whenComplete(() {});
-    final profilePictureUrl = await snapshot.ref.getDownloadURL();
-
-    // update profile picture field in firestore
-    return users
-        .doc('${currentUser.uid}')
-        .update({'profilePicture': profilePictureUrl})
-        .then((value) => print("ProfilePicture Updated"))
-        .catchError((error) => print("Failed to update user: $error"));
+    FileUploadInputElement input = FileUploadInputElement()..accept = 'image/*';
+    FirebaseStorage fs = FirebaseStorage.instance;
+    input..click();
+    input.onChange.listen((event) {
+      final file = input.files!.first;
+      final reader = FileReader();
+      reader.readAsDataUrl(file);
+      reader.onLoadEnd.listen((event) async {
+        final snapshot =
+            await fs.ref('${currentUser!.email}/profilePicture').putBlob(file);
+        //  get download url
+        final profilePictureUrl = await snapshot.ref.getDownloadURL();
+        // update profile picture field in firestore
+        return users
+            .doc('${currentUser.uid}')
+            .update({'profilePicture': profilePictureUrl});
+        // .then((value) => print("ProfilePicture Updated"))
+        // .catchError((error) => print("Failed to update user: $error"));
+      });
+    });
   }
 }

@@ -4,7 +4,7 @@ import 'package:mythings/my_constants/my_constants.dart';
 class MultiLineTextField extends StatelessWidget {
   final Function? onChanged;
   final TextEditingController? controller;
-  final String hintText;
+  final String? hintText;
   final double? height;
   final keyboardType;
   final int? maxLines;
@@ -13,7 +13,7 @@ class MultiLineTextField extends StatelessWidget {
 
   const MultiLineTextField({
     Key? key,
-    required this.hintText,
+    this.hintText,
     required this.height,
     this.onChanged,
     this.keyboardType,

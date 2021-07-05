@@ -1,6 +1,6 @@
 {
-    "name": "mythings",
-    "short_name": "mythings",
+    "name": "My Things",
+    "short_name": "My Things",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

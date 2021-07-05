@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:mythings/my_constants/my_constants.dart';
-import 'package:mythings/utils.dart';
+import 'package:mythings/my_constants/responsive.dart';
+import 'package:mythings/repositories/utils.dart';
 import 'package:mythings/widgets/login_text_form_filed.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -42,75 +43,84 @@ class _ResetPasswordState extends State<ResetPassword> {
           backgroundColor: kAppGreen,
           elevation: 0.0,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Form(
-              key: _resetPasswordKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    'Enter your\nEmail Address',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  LoginSignUpTextFormField(
-                      controller: _emailController,
-                      obscureText: false,
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (val) =>
-                          val!.isEmpty ? 'Enter a valid email address' : null,
-                      labelText: 'Your email address*'),
-                  error == ''
-                      ? const SizedBox.shrink()
-                      : Column(
-                          children: [
-                            const SizedBox(height: 2.0),
-                            Text(
-                              error,
-                              style: TextStyle(color: Colors.red, fontSize: 14),
-                            ),
-                          ],
-                        ),
-                  const SizedBox(height: 25),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        primary: kAppGreen,
-                      ),
-                      child: Text(
-                        'Send verification email',
+        body: Center(
+          child: Container(
+            height: double.infinity,
+            width: Responsive.isMobile(context) ? double.infinity : 600,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Form(
+                  key: _resetPasswordKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: 20),
+                      Text(
+                        'Enter your\nEmail Address',
                         style: TextStyle(
-                          // fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      onPressed: () async {
-                        unFocus();
-                        if (_resetPasswordKey.currentState!.validate()) {
-                          setState(() => loading = true);
+                      const SizedBox(height: 20),
+                      LoginSignUpTextFormField(
+                          controller: _emailController,
+                          obscureText: false,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (val) => val!.isEmpty
+                              ? 'Enter a valid email address'
+                              : null,
+                          labelText: 'Your email address*'),
+                      error == ''
+                          ? const SizedBox.shrink()
+                          : Column(
+                              children: [
+                                const SizedBox(height: 2.0),
+                                Text(
+                                  error,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14),
+                                ),
+                              ],
+                            ),
+                      const SizedBox(height: 25),
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)),
+                            primary: kAppGreen,
+                          ),
+                          child: Text(
+                            'Send verification email',
+                            style: TextStyle(
+                              // fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          onPressed: () async {
+                            unFocus();
+                            if (_resetPasswordKey.currentState!.validate()) {
+                              setState(() => loading = true);
 
-                          try {
-                            await _auth.sendPasswordResetEmail(
-                                email: _emailController.text);
-                            Navigator.of(context).pop();
-                            Utils.showSnackBar(
-                                context, 'Verification email sent!');
-                          } catch (e) {
-                            print('Error is: $e');
-                            setState(() {
-                              error = 'No user found for this email.';
-                              loading = false;
-                            });
-                          }
-                        }
-                      }),
-                  const SizedBox(height: 80),
-                ],
+                              try {
+                                await _auth.sendPasswordResetEmail(
+                                    email: _emailController.text);
+                                Navigator.of(context).pop();
+                                Utils.showSnackBar(
+                                    context, 'Verification email sent!');
+                              } catch (e) {
+                                print('Error is: $e');
+                                setState(() {
+                                  error = 'No user found for this email.';
+                                  loading = false;
+                                });
+                              }
+                            }
+                          }),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

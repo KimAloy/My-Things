@@ -7,21 +7,21 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
-import 'package:mythings/firebase_api/firebase_api.dart';
 import 'package:mythings/my_constants/my_constants.dart';
+import 'package:mythings/repositories/firebase_api.dart';
 import 'package:mythings/widgets/brand_name.dart';
 import 'package:mythings/widgets/itemDetails.dart';
 import 'package:mythings/widgets/my_date.dart';
 import 'package:mythings/widgets/upload_image_widget.dart';
 
-class AddThing extends StatefulWidget {
-  const AddThing({Key? key}) : super(key: key);
+class AddThingMobilePage extends StatefulWidget {
+  const AddThingMobilePage({Key? key}) : super(key: key);
 
   @override
-  _AddThingState createState() => _AddThingState();
+  _AddThingMobilePageState createState() => _AddThingMobilePageState();
 }
 
-class _AddThingState extends State<AddThing> {
+class _AddThingMobilePageState extends State<AddThingMobilePage> {
   final itemDescriptionController = TextEditingController();
   final brandNameController = TextEditingController();
   final expiryMonthController = TextEditingController();
@@ -80,10 +80,6 @@ class _AddThingState extends State<AddThing> {
                   title: 'Guarantee expiry date*',
                   monthController: expiryMonthController,
                   yearController: expiryYearController,
-                  // monthValidator: (value) =>
-                  //     value.isEmpty || int.parse(value) > 12 || value.length > 2
-                  //         ? 'Month'
-                  //         : null,
                   yearValidator: (value) =>
                       value.isEmpty || value.length != 4 ? 'Year' : null,
                 ),
@@ -92,10 +88,6 @@ class _AddThingState extends State<AddThing> {
                   title: 'Purchase date*',
                   monthController: purchaseMonthController,
                   yearController: purchaseYearController,
-                  // monthValidator: (value) =>
-                  //     value.isEmpty || int.parse(value) > 12 || value.length > 2
-                  //         ? 'Month'
-                  //         : null,
                   yearValidator: (value) => value.isEmpty ||
                           int.parse(value) > currentDate.year ||
                           value.length != 4
@@ -103,7 +95,7 @@ class _AddThingState extends State<AddThing> {
                       : null,
                 ),
                 SizedBox(height: 8),
-                UploadImageWidget(
+                UploadImageMobileWidget(
                   file: receiptPhotoFile,
                   onTap: () {
                     selectReceiptFile();
@@ -123,7 +115,7 @@ class _AddThingState extends State<AddThing> {
                         ],
                       ),
                 SizedBox(height: 8),
-                UploadImageWidget(
+                UploadImageMobileWidget(
                   file: itemPhotoFile,
                   onTap: () {
                     selectItemPhotoFile();
@@ -223,14 +215,14 @@ class _AddThingState extends State<AddThing> {
       final snapshot = await task.whenComplete(() {});
       final itemPhotoFileUrlDownload = await snapshot.ref.getDownloadURL();
 
-      /// upload itemPhotoFile to Firebase Storage
+      /// upload receiptPhotoFile to Firebase Storage
       if (receiptPhotoFile == null) return;
       // final fileName = itemPhotoFile!.path;
       final imageDestination =
           '${currentUser.email}/${DateTime.now().toString()}';
       task = FirebaseApi.uploadFile(imageDestination, receiptPhotoFile!);
 
-      print('itemPhotoFile successfully uploaded');
+      print('receiptPhotoFile successfully uploaded');
 
       // Get image url
       if (task == null) return;
@@ -251,6 +243,7 @@ class _AddThingState extends State<AddThing> {
       });
 
       Navigator.of(context).pop();
+      // context.beamBack();
     }
   }
 }

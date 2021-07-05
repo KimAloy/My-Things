@@ -26,7 +26,7 @@ class ItemDetails extends StatelessWidget {
               height: 80,
               keyboardType: TextInputType.multiline,
               maxLines: 999,
-              hintText: 'Enter a short title...',
+              // hintText: 'Enter a short title...',
               fontWeight: FontWeight.bold,
               // validator: (value) =>
               //     value.isEmpty ? 'Please enter an Advert Title*' : null),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mythings/my_constants/my_constants.dart';
 
-class HasNoData extends StatelessWidget {
-  const HasNoData({Key? key}) : super(key: key);
+class MyLoadingPage extends StatelessWidget {
+  const MyLoadingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -3,14 +3,16 @@ import 'package:mythings/my_constants/my_constants.dart';
 
 class MyDialog extends StatelessWidget {
   final Function onPressed;
-final String title;
-  const MyDialog({Key? key,required this.title, required this.onPressed}) : super(key: key);
+  final String title;
+  const MyDialog({Key? key, required this.title, required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: Container(
         height: 150,
+        width: 300,
         margin: EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
